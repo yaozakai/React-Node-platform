@@ -36,6 +36,7 @@
     position: static!important;
     margin: 0!important;
     width: calc(100% + 52px);
+    margin-top: 3px!important;
 }
 
 .carousel .carousel-indicators button {
