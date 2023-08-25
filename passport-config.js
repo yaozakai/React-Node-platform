@@ -1,4 +1,5 @@
 const LocalStrategy = require('passport-local').Strategy
+const GoogleStrategy = require('passport-google-oauth20')
 const bcrypt = require('bcrypt')
 
 function initialize(passport, getUserbyEmail, getUserbyId) {
@@ -17,8 +18,16 @@ function initialize(passport, getUserbyEmail, getUserbyId) {
             return done(e)
         }
     }
-    passport.use(new LocalStrategy({ usernameField: 'email',    // define the parameter in req.body that passport can use as username and password
-    passwordField: 'password'}, authenticateUser))
+    passport.use(
+        new LocalStrategy({ 
+            usernameField: 'email', 
+            passwordField: 'password'}, 
+            authenticateUser))
+    passport.use(
+        new GoogleStrategy({ 
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET},
+            authenticateUser))
 
     passport.serializeUser((user, done) => { done(null, user.id) })
     passport.deserializeUser((id, done) => { return done(null, getUserbyId(id)) })

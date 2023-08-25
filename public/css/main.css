@@ -52,3 +52,14 @@
     position: inherit;
     color: black;
  }
+
+ .social-icon {
+    padding-left: 10px;
+    padding-right: 10px;
+ }
+
+ .svg-twitter-logo {
+    height: 15px;
+    margin: 0 0 3px 2px;
+    filter: invert(99%) sepia(7%) saturate(126%) hue-rotate(239deg) brightness(118%) contrast(100%);
+ }
