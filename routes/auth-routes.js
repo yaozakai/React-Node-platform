@@ -1,9 +1,8 @@
 const check_auth = require('./auth-check')
-const users = require('./../db/db_access.js')
-
 const router = require('express').Router()
 const passport = require('passport')
-const session = require('express-session')
+const bcrypt = require('bcrypt')
+const User = require('./../db/user-model')
 
 
 router.get('/login', (req, resp) => {
@@ -17,32 +16,49 @@ router.post('/login', check_auth.not, passport.authenticate('local', {
  }))
 
  router.delete('/logout', (req, resp) => {
-    req.logout(function(err) {
-        if (err) { return next(err) }
-        resp.redirect('/')
-    })
+    req.logout()
+    resp.redirect('/')
+        
 })
 
 router.post('/register', check_auth.not, async (req, resp) => {
-
+    
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        users.push({
-            id: Date.now().toString(),
-            username: req.body.username,
-            email: req.body.email,
-            password: hashedPassword
+        // check if user exists
+        User.findOne({ where: {username: req.body.username}}).then((currentUser) => {
+            User.findOne({ where: {email: req.body.email}}).then((emailFound) => {
+                if (currentUser || emailFound){
+                    // user exists
+                    resp.redirect('/')
+                } else {
+                    // create user
+                    new User({
+                        username: req.body.username,
+                        email: req.body.email,
+                        googleId: '',
+                        image: '',
+                        password: hashedPassword
+                    }).save().then((newUser) => {
+                        resp.redirect('/dashboard')
+                    })
+                }
+            }) 
         })
-        resp.redirect('/')
     } catch {
         resp.redirect('/')
     }
-    console.log(users)
 })
 
- router.get('/google', (req, resp) => {
+ router.get('/google', passport.authenticate('google', {
+        scope: ['profile']
+    })
+ )
 
-    resp.send('Logging in with Google')
+ router.get('/google/redirect', passport.authenticate('google'), (req, resp) => {
+    // resp.send(req.user)
+    // resp.send('you are logged in: ' + req.user.username) 
+    resp.redirect('/dashboard')
  })
 
  module.exports = router

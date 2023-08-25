@@ -1,13 +1,17 @@
 module.exports = {
     is: function ( req, resp, next) {
-        if (req.isAuthenticated()) {
-            return next()
+        if (!req.user) {
+            // not logged in
+            resp.redirect('/')
+            
+        } else {
+            // logged in
+            next()
         }
-        return resp.redirect('/')
     },    
     not: function ( req, resp, next) {
         if (req.isAuthenticated()) {
-            resp.redirect('/dashboard')
+            return resp.redirect('/dashboard')
         }
         next()
     }    
