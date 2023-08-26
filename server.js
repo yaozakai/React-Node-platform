@@ -51,8 +51,6 @@ app.use(cookieSession({
 app.use(passport.initialize())
 app.use(passport.session())
 
-
-
 // add routes from other files here
 app.use('/auth', authRoutes)
 app.use('/dashboard', dashboardRoutes)
@@ -69,7 +67,6 @@ initializePassport(
 
 app.get('/', check_auth.not, (req, resp) => {
     // resp.send(await fs.readFile('./home.html', 'utf8'))
-    
     resp.render('home.ejs')
 })
 
