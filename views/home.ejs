@@ -17,24 +17,26 @@
   <section class="vh-100 gradient-custom">
       <div class="container py-5 h-100">
         <!-- alert -->
-        <div class="alert alert-primary alert-danger fade" id="alert-box">
-          <button id="close-alert-button" type="button" class="btn-close btn-close-alert" aria-label="Close"></button>
-          <div style="margin-left:40px;">
+        <div class="alert alert-primary alert-danger fade
+        <% if (messages.alertTitle) { %>
+          show
+        <% } %>
+
+          " id="alert-box">
+          <button id="close-alert-button" type="button" class="btn-close btn-close-alert" data-bs-dismiss="alert"></button>
+          <div class="alert-box-content">
               <div style="display:inline-flex;">
                   <svg style="margin-top: 3px;margin-right: 3px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill mb-1" viewBox="0 0 16 16">
                     <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
                   </svg>
-                  <strong><div id="alert-title"></div></strong>
+                  <strong><div id="alert-title"><%= messages.alertTitle %></div></strong>
               </div>
-              <div id="alert-message"><%= messages.success %></div>
+              <div id="alert-message"><%= messages.alertMsg %></div>
           </div>
-      </div>
-        <% if (messages.success) { %>
-          <%= messages %>
-          <div class="alert alert-success"></div>
-        <% } %>
+        </div>
+        
 
-        <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="row d-flex justify-content-center h-100">
           <div class="col-12 col-md-8 col-lg-6 col-xl-5 sign-inup-box">
             <div id="toggle" class="card bg-dark text-white" style="border-radius: 1rem;">
 
@@ -48,11 +50,11 @@
                 </div>
 
                 <div class="carousel-inner">
-                  <div id="forgot" class="carousel-item p-5 text-center ">
+                  <div id="forgot" class="carousel-item p-4 text-center ">
                     <div>Walt Yao's Sign In/Up App
                       <h2 class="fw-bold mb-2 text-uppercase">Reset password</h2>
 
-                      <form action="/auth/reset_password" method="POST">
+                      <form id="form-forgot" action="/auth/reset_password" method="POST">
                         <div class="form-outline form-white mb-4">
                           <input type="email" id="reset-email" name="email" class="form-control form-control-lg" required>
                           <label class="form-label" for="reset-email">Email</label>
@@ -63,7 +65,7 @@
         
                   </div>
 
-                  <div id="login" class="carousel-item active  p-5 text-center ">
+                  <div id="login" class="carousel-item active  p-4 text-center ">
                     <div>Walt Yao's Sign In/Up App
                       <h2 class="fw-bold mb-2 text-uppercase">Sign In</h2>
 
@@ -100,7 +102,7 @@
                   </div>
 
 
-                  <div id="register" class="carousel-item  p-5 text-center">
+                  <div id="register" class="carousel-item  p-4 text-center">
         
                     <div>Walt Yao's Sign In/Up App
                       <h2 class="fw-bold mb-2 text-uppercase">Sign Up</h2>
@@ -118,8 +120,24 @@
                           <input type="password" id="reg-password" name="password" class="form-control form-control-lg" required>
                           <label class="form-label" for="reg-password">Password</label>
                         </div>
+                        <div class="form-outline form-white">
+                          <input type="password" id="reg-password-verify" name="password-verify" class="form-control form-control-lg" required>
+                          <label class="form-label" for="reg-password">Password one more time</label>
+                        </div>
+                        <div id="password-checklist" class="pb-4">
+                            <span>Validators:</span>
+                            <span><i id="username-check" class="bi bi-dash-square validator"></i> Enter <b>any</b> username</span>
+                            <span><i id="email-check" class="bi bi-dash-square validator"></i> Enter a <b>valid</b> email</span>
+                            <span><i id="password-check-letter" class="bi bi-dash-square validator"></i> A <b>lowercase</b> letter</span>
+                            <span><i id="password-check-capital" class="bi bi-dash-square validator"></i> A <b>capital (uppercase)</b> letter</span>
+                            <span><i id="password-check-number" class="bi bi-dash-square validator"></i> A <b>number</b></span>
+                            <span><i id="password-check-special" class="bi bi-dash-square validator"></i> A <b>special character</b></span>
+                            <span><i id="password-check-length" class="bi bi-dash-square validator"></i> Minimum <b>8 characters</b></span>
+                            <span><i id="password-check-verify" class="bi bi-dash-square validator"></i> Enter the password <b>twice</b></span>
+                        </div>
+
           
-                        <button class="btn btn-outline-light btn-lg px-5" type="submit">Sign Up</button>
+                        <button id="register-submit" class="btn btn-outline-light btn-lg px-5 disabled" type="submit">Sign Up</button>
                         <div class="mt-4">
                           Or sign up with:
                           <div class="d-flex justify-content-center text-center mb-2 pt-1">
@@ -139,6 +157,6 @@
       </div>
     </section>
   </body>
-  <script language="JavaScript" type="text/javascript" src="ui/form.js"></script>
-  <script language="JavaScript" type="text/javascript" src="ui/alert.js"></script>
+  <script language="JavaScript" type="text/javascript" src="ui/client-form.js"></script>
+  <script language="JavaScript" type="text/javascript" src="ui/client-alert.js"></script>
 </html>

@@ -16,7 +16,12 @@
 
 #alert-box {
     position: absolute;
-    z-index: 1;
+    z-index: 3;
+}
+
+.alert-box-content {
+    margin-left: 40px;
+    margin-top: -25px;
 }
 
 .topbar {
@@ -68,3 +73,8 @@
     margin: 0 0 3px 2px;
     filter: invert(99%) sepia(7%) saturate(126%) hue-rotate(239deg) brightness(118%) contrast(100%);
  }
+
+ #password-checklist {
+    font-size: 12px;
+    display: grid;
+}
