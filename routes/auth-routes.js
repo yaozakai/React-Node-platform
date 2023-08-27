@@ -5,19 +5,27 @@ const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const User = require('./../db/user-model')
 
-const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(process.env.SENDGRID_KEY)
+const toolEmail = require('./tool-email')
+var ObjectId = require('mongodb').ObjectId;
 
 
 router.get('/login', (req, resp) => {
     resp.redirect('/')
 })
 
-router.post('/login', check_auth.not, passport.authenticate('local', {
-    successRedirect: '/dashboard',
+router.post('/login', check_auth.verify, passport.authenticate('local', {
     failureRedirect: '/',
     failureFlash: true
- }))
+    }), (req, resp) => {
+        if (req.user.isVerified === true) {
+            return resp.redirect('/dashboard')
+        }
+        // remind user to confirm email
+        req.flash('resendEmail', true)
+        req.flash('error', 'Account already exists but you have not yet verified your email!')
+        resp.redirect('/')
+    }
+)
 
  router.delete('/logout', (req, resp) => {
     req.logout()
@@ -25,83 +33,116 @@ router.post('/login', check_auth.not, passport.authenticate('local', {
         
 })
 
-router.post('/register', check_auth.not, async (req, resp) => {
+router.post('/register', check_auth.verify, async (req, resp) => {
     
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
         // check if user exists
         User.findOne({ username: req.body.username }).then((currentUser) => {
-            User.findOne({ email: req.body.email}).then((emailFound) => {
-                if (currentUser || emailFound){
-                    // user exists
-                    req.flash('alertTitle', 'Confirmation email resent!')
-                    req.flash('alertMsg', 'Your account already exists, so we sent a confirmation email to ' + req.body.email + '. Please verify your account through the link sent to you.')
-                    resp.redirect('/')
-                } else {
-                    // create user
-                    new User({
-                        username: req.body.username,
-                        email: req.body.email,
-                        emailToken: crypto.randomBytes(64).toString('hex'),
-                        googleId: '',
-                        image: '',
-                        password: hashedPassword
-                    }).save().then((newUser) => {
-
-                        const msg = {
-                            from: 'no-reply@waltyao.com',
-                            to: req.body.email,
-                            subject: 'Please confirm your account',
-                            text: `Thanks for stopping by, click on this link to confirm: 
-                            http://${req.headers.host}/auth/email?token=${newUser.emailToken}
-                            `,
-                            html: `<a href="http://${req.headers.host}/auth/email?token=${newUser.emailToken})">`
-                        }
-                        sgMail.send(msg).then(() => {
-                            req.flash('alertTitle', 'Check your email!')
-                            req.flash('alertMsg', 'Email has been sent to ' + req.body.email + '. Please verify your account through the link sent to you.')
+            // user found via username
+            if( currentUser ){
+                // req.flash('alertTitle', 'Username already exists!')
+                // req.flash('alertMsg', 'Pick a different username')
+                req.flash('error', 'Sorry, username already exists! Pick a different one.')
+                resp.redirect('/') 
+            } else {
+                User.findOne({ email: req.body.email}).then((currentUser) => {
+                    if( currentUser ){
+                        // user found via email
+                        if( currentUser.isVerified ) {
+                            // user already verified
+                            // req.flash('alertTitle', 'Account already exists!')
+                            // req.flash('alertMsg', 'Please sign in with your credentials, or click "forgot password" to reset.')
+                            req.flash('error', 'Account already exists! Please sign in with your credentials, or click "forgot password" to reset.')
                             resp.redirect('/')
-                        }).catch((error) => {
-                            req.flash('alertTitle', 'Email error')
-                            req.flash('alertMsg', 'Something when wrong when sending email. Please try again.')
-                        }) 
-                    })
-                }
-            }) 
+                        } else {
+                            // request resending of verify email
+                            req.flash('resendEmail', true)
+                            req.flash('error', 'Account already exists but you have not yet verified your email!')
+                            resp.redirect('/')
+                        }
+                    } else {
+                        // create user
+                        new User({
+                            isVerified: false,
+                            email: req.body.email,
+                            username: req.body.username,
+                            emailToken: crypto.randomBytes(64).toString('hex'),
+                            googleId: '',
+                            image: '',
+                            password: hashedPassword,
+                            locale: req.body.locale
+                        }).save().then((newUser) => {
+                            toolEmail.sendVerify(req, resp, newUser)                        
+                        })
+                    }
+                }).catch( ( ) => {
+                    req.flash('alertTitle', 'Server error')
+                    req.flash('Please try later (not my fault)')
+                    resp.redirect('/')   
+                })
+            }
+        }).catch(() => {
+            req.flash('alertTitle', 'Server error')
+            req.flash('Please try later (not my fault)')
+            resp.redirect('/')   
+        }) 
+    } catch {
+        req.flash('alertTitle', 'Server error')
+        req.flash('Please try later (not my fault)')
+        resp.redirect('/')   
+    }
+})
+
+router.get('/verifyEmail', check_auth.verifyEmail, async(req, resp, next) => {
+    try {
+        // check if user exists
+        User.findOne({ email: req.query.email }).then((currentUser) => {
+            toolEmail.sendVerify(req, resp, currentUser)
         })
     } catch {
         resp.redirect('/')
+
     }
 })
 
 router.get('/email', async(req, resp, next) => {
 
     try {
-        User.findOne({ emailToken: req.query.token }).then((currentUser) => {
-            // req.flash('alertTitle', 'Account confirmed!')
-            // req.flash('alertMsg', 'Logging in..')
-            currentUser.emailToken = NULL
-            currentUser.isVerified = true
-            currentUser.save()
-            req.login(currentUser).then(() => {
-                req.flash('alertTitle', `Hi ${currentUser.username}!`)
-                req.flash('alertMsg', 'Welcome to the site for the first time! 😎')
-                const redirectURL = req.session.redirectTo || '/dashboard'
-                delete req.session.redirectTo
-                resp.redirect(redirectURL)
-            }).catch((error) => {
-                req.flash('alertTitle', 'Login error')
-                req.flash('alertMsg', 'Something.')
-            })
-            return resp.redirect('/')
+        User.findOne({ emailToken: req.query.token }).then( async ( currentUser) => {
+            if( currentUser ){
+                currentUser.emailToken = ''
+                currentUser.isVerified = true
+                await currentUser.save()
+                req.login(currentUser, loginError => {
+                    if( loginError ){
+                        console.log( loginError )
+                    }
+                    req.flash('error', `Hi ${currentUser.username}! Welcome to the site for the first time! 😎`)
+                    resp.redirect('/dashboard')
+                    return
+                })
+                    // req.login(savedUser).then((loginUser) => {
+                    //     req.flash('error', `Hi ${loginUser.username}! Welcome to the site for the first time! 😎`)
+                    //     // req.flash('alertTitle', `Hi ${currentUser.username}!`)
+                    //     // req.flash('alertMsg', 'Welcome to the site for the first time! 😎')
+                    //     resp.redirect('/dashboard')
+                    //     return
+                    // }).catch((error) => {
+                    //     throw (error)
+                    // })
+            }
         }).catch((error) => {
-            req.flash('alertTitle', 'Email error')
+            req.flash('alertTitle', `Email error:${error}`)
             req.flash('alertMsg', 'Email token is invalid, please try registering again.')
-            return resp.redirect('/')
+            resp.redirect('/')
+            return
         })
         
     } catch(error) {
-
+        req.flash('alertTitle', 'Login error')
+        req.flash('alertMsg', 'System is down.')
+        return
     }
 })
 

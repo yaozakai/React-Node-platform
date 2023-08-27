@@ -15,10 +15,20 @@
 
 <body>
   <section class="vh-100 gradient-custom">
+    <% if( messages.error ){ %>
+      <div id="alert-bar">
+        <div style="display:inline-flex;margin: 0 auto;">
+            <svg id="alert-title style="margin-top: 3px;margin-right: 3px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill mb-1" viewBox="0 0 16 16">
+                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+            </svg>
+            <strong><div id="alert-bar-title"><%= messages.error %></div></strong>
+        </div>
+      </div>
+  <% } %>
       <div class="container py-5 h-100">
         <!-- alert -->
         <div class="alert alert-primary alert-danger fade
-        <% if (messages.alertTitle) { %>
+        <% if( messages.alertTitle ){ %>
           show
         <% } %>
 
@@ -65,7 +75,11 @@
         
                   </div>
 
-                  <div id="login" class="carousel-item active  p-4 text-center ">
+                  <div id="login" class="carousel-item 
+                  <% if( !messages.resendEmail ) { %>
+                    active
+                  <% } %>
+                    p-4 text-center ">
                     <div>Walt Yao's Sign In/Up App
                       <h2 class="fw-bold mb-2 text-uppercase">Sign In</h2>
 
@@ -79,8 +93,8 @@
                           <label class="form-label" for="login-password">Password</label>
                         </div>
                         
-                        <button class="btn text-white-50 fw-bold btn-link"  data-bs-target="#sliderPanel" data-bs-slide-to="0">Forgot password?</button>
                         <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+                        <button class="btn text-white-50 fw-bold btn-link"  data-bs-target="#sliderPanel" data-bs-slide-to="0">Forgot password?</button>
                       </form>
 
                       <div class="mt-4">
@@ -147,6 +161,18 @@
                           </div>
                         </div>
                       </form>                     
+                    </div>
+                  </div>
+
+                  <div id="resend-email-verification" class="carousel-item p-4 text-center
+                  <% if( messages.resendEmail ) { %>
+                    active
+                  <% } %>
+                   ">
+                    <div>Walt Yao's Sign In/Up App
+                      <h2 class="fw-bold mb-2 text-uppercase">Resend confirmation email</h2>
+                      <div class="mb-1">Please activate your account by verifying your email.</div>
+                      <a href="/auth/verifyEmail?email=<%= messages.resendEmail %>" class="btn btn-outline-light btn-lg px-5"><i class="bi bi-envelope"></i> Email confirmation link</a>    
                     </div>
                   </div>
                 </div>

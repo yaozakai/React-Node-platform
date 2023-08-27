@@ -60,10 +60,10 @@ const initializePassport = require('./passport-config')
 initializePassport(
     passport,
     email => User.findOne({email: email}).email,
-    id => User.findOne({googleId: id}.id)
+    id => User.findOne({googleId: id}).id
 )
 
-app.get('/', check_auth.not, (req, resp) => {
+app.get('/', check_auth.home, (req, resp) => {
     // req.flash('success', 'failedddfsdfsd')
 
     resp.render('home.ejs')
