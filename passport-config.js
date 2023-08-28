@@ -45,10 +45,19 @@ function initialize(passport) {
             } else {
                 // create user
                 new User({
-                    username: profile.displayName,
+                    created: Date.now(),
+                    lastSession: '',
+                    loginCount: 0,
+                    isVerified: true,
                     email: '',
+                    username: profile.displayName,
+                    emailToken: '',
+                    forgotToken: '',
                     googleId: profile.id,
-                    image: profile.photos[0]['value']
+                    image: profile.photos[0]['value'],
+                    password: '',
+                    locale: profile.locale
+
                 }).save().then((newUser) => {
                     done(null, newUser)
                 })

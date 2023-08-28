@@ -2,6 +2,9 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
+    created: Date,
+    lastSession: Date,
+    loginCount: Number,
     isVerified: Boolean,
     username: String,
     email: String,

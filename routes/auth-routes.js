@@ -16,14 +16,12 @@ router.get('/login', (req, resp) => {
 router.post('/login', check_auth.verify, passport.authenticate('local', {
     failureRedirect: '/',
     failureFlash: true
-    }), (req, resp) => {
-        if (req.user.isVerified === true) {
-            return resp.redirect('/dashboard')
-        }
-        // remind user to confirm email
-        req.flash('resendEmail', true)
-        req.flash('error', 'Account already exists but you have not yet verified your email!')
-        resp.redirect('/')
+    }), async (req, resp) => {
+        // update user stats (after passport authenticate, otherwise, user is redirected at check_auth.verify)
+        req.user.loginCount++
+        req.user.lastSession = req.session.created
+        await req.user.save()
+        return resp.redirect('/dashboard')
     }
 )
 
@@ -64,6 +62,9 @@ router.post('/register', check_auth.verify, async (req, resp) => {
                     } else {
                         // create user
                         new User({
+                            created: Date.now(),
+                            lastSession: '',
+                            loginCount: 0,
                             isVerified: false,
                             email: req.body.email,
                             username: req.body.username,
@@ -72,7 +73,7 @@ router.post('/register', check_auth.verify, async (req, resp) => {
                             googleId: '',
                             image: '',
                             password: hashedPassword,
-                            locale: req.body.locale
+                            locale: ''
                         }).save().then((newUser) => {
                             toolEmail.sendVerify(req, resp, newUser)                        
                         })
@@ -209,12 +210,15 @@ router.get('/email', async(req, resp, next) => {
     }
 })
 
- router.get('/google', passport.authenticate('google', {
+ router.get('/google', check_auth.verify, passport.authenticate('google', {
         scope: ['profile']
     })
  )
 
- router.get('/google/redirect', passport.authenticate('google'), (req, resp) => {
+ router.get('/google/redirect', check_auth.verify, passport.authenticate('google'), async (req, resp) => {
+    req.user.loginCount++
+    req.user.lastSession = req.session.created
+    await req.user.save()
     // resp.send(req.user)
     // resp.send('you are logged in: ' + req.user.username) 
     resp.redirect('/dashboard')
