@@ -33,7 +33,7 @@ module.exports = {
     // to decide on which ejs file to
     dash: function ( req, resp, next) {
         if( req.user ) {
-            if( req.user.isVerified ) {
+            if( req.user.isVerified || req.user.googleId ) {
                 // logged in and verified, proceed
                 next()
                 return

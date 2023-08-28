@@ -9,6 +9,7 @@ const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING), () => {
     console.log('mongao koneckt!!!!')
 }
+mongoose.connection.on('connected', () => console.log('Connected'));
 
 
 const authRoutes = require('./routes/auth-routes')

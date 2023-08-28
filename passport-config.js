@@ -47,7 +47,7 @@ function initialize(passport) {
                 new User({
                     username: profile.displayName,
                     email: '',
-                    googleId: profile.googleId,
+                    googleId: profile.id,
                     image: profile.photos[0]['value']
                 }).save().then((newUser) => {
                     done(null, newUser)

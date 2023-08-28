@@ -118,7 +118,7 @@ router.get('/email', async(req, resp, next) => {
                     if( loginError ){
                         console.log( loginError )
                     }
-                    req.flash('error', `Hi ${currentUser.username}! Welcome to the site for the first time! 😎`)
+                    req.flash('error', `Hi ${çcurrentUser.username}! Welcome to the site for the first time! 😎`)
                     resp.redirect('/dashboard')
                     return
                 })
