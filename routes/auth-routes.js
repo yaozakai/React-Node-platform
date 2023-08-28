@@ -68,6 +68,7 @@ router.post('/register', check_auth.verify, async (req, resp) => {
                             email: req.body.email,
                             username: req.body.username,
                             emailToken: crypto.randomBytes(64).toString('hex'),
+                            forgotToken: '',
                             googleId: '',
                             image: '',
                             password: hashedPassword,
@@ -94,6 +95,68 @@ router.post('/register', check_auth.verify, async (req, resp) => {
     }
 })
 
+// forgot password
+// 1. /send_forgot send initial request
+// 2. /reset_pass comes from the email
+// 3. /set_pass comes from user setting new password
+router.post('/send_forgot', check_auth.home, async(req, resp, next) => {
+    try {
+        // check if user exists
+        User.findOne({ email: req.body.email }).then((currentUser) => {
+            if( currentUser ){
+                toolEmail.sendForgot(req, resp, currentUser)
+                return 
+            }
+            req.flash('error', `Email ${req.body.email} does not exist!`)
+            resp.redirect('/')
+            return
+        })
+    } catch {
+        resp.redirect('/')
+    }
+})
+
+router.get('/reset_pass', check_auth.home, async(req, resp, next) => {
+    try {
+        // search for forgotToken
+        User.findOne({ forgotToken: req.query.token }).then((currentUser) => {
+            if( currentUser ){
+                // req.flash('forgotToken', req.query.token)
+                resp.render('forgot.ejs', { user: currentUser })
+                return 
+            }
+            req.flash('error', `Invalid token, please get a new email by clicking on "Forgot Password?"`)
+            resp.render('forgot.ejs')
+            return
+        })
+    } catch {
+        resp.redirect('/')
+    }
+})
+
+router.post('/set_pass', check_auth.home, async(req, resp, next) => {
+    try {
+        // search for forgotToken
+        User.findOne({ forgotToken: req.query.token }).then( async (currentUser) => {
+            if( currentUser ){
+                // change the password
+                const hashedPassword = await bcrypt.hash(req.body.password, 10)
+                currentUser.password = hashedPassword
+                await currentUser.save()
+                req.flash('error', `Password successfully changed! Sign in to continue.`)
+                resp.redirect('/')
+                return 
+            }
+            req.flash('error', `Invalid token, please get a new email by clicking on "Forgot Password?"`)
+            resp.redirect('/')
+            return
+        })
+    } catch {
+        resp.redirect('/')
+    }
+})
+
+// login process
 router.get('/verifyEmail', check_auth.verifyEmail, async(req, resp, next) => {
     try {
         // check if user exists

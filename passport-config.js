@@ -38,7 +38,7 @@ function initialize(passport) {
     }
     const authenticateGoogleUser = async (accessToken, refreshToken, profile, done) => {
         // check if user exists
-        User.findOne({googleId: profile.googleId}).then((currentUser) => {
+        User.findOne({googleId: profile.id}).then((currentUser) => {
             if (currentUser){
                 // user exists
                 done(null, currentUser)
