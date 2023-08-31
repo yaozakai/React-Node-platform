@@ -25,10 +25,26 @@ router.post('/login', check_auth.verify, passport.authenticate('local', {
     }
 )
 
- router.delete('/logout', (req, resp) => {
-    req.logout()
-    resp.redirect('/')
+router.delete('/logout', (req, resp) => {
+   req.logout()
+   resp.redirect('/')
+       
+})
+
+router.post('/change', (req, resp) => {
+    req.user.username = req.body.newName
+    req.user.save().then(() => {
+        var response = {
+            status  : 200,
+            success : 'Updated Successfully',
+            newGame: req.body.newName
+        }
+        resp.end(JSON.stringify(response));
         
+
+    }).catch(() => {
+        return false
+    })
 })
 
 router.post('/register', check_auth.verify, async (req, resp) => {
@@ -182,7 +198,7 @@ router.get('/email', async(req, resp, next) => {
                     if( loginError ){
                         console.log( loginError )
                     }
-                    req.flash('error', `Hi ${çcurrentUser.username}! Welcome to the site for the first time! 😎`)
+                    req.flash('error', `Hi ${currentUser.username}! Welcome to the site for the first time! 😎`)
                     resp.redirect('/dashboard')
                     return
                 })

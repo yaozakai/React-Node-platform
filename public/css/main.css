@@ -60,6 +60,10 @@
     border-top-right-radius: 0px!important;
 }
 
+.edit-field {
+    width: 225px;
+}
+
 .carousel-indicators {
     position: static!important;
     margin: 0!important;

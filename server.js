@@ -36,15 +36,6 @@ app.use(methodOverride('_method'))
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(__dirname + '/public/'))
 app.use(flash())
-// app.use(session({
-//     secret: process.env.SESSION_SECRET,
-//     cookie: {
-//         maxAge: 3 * 24 * 60 * 60 * 1000,  // 3 days
-//         keys: [process.env.SESSION_SECRET]
-//     },
-//     resave: false,
-//     saveUninitialized: false
-// }))
 app.use(cookieSession({
         maxAge: 3 * 24 * 60 * 60 * 1000,  // 3 days
         keys: [process.env.SESSION_SECRET]
@@ -52,9 +43,9 @@ app.use(cookieSession({
 app.use(passport.initialize())
 app.use(passport.session())
 app.use((req, res, next) => {
-    if (typeof req.session.created === "undefined") {
+    // if (typeof req.session.created === "undefined") {
         req.session.created = Date.now()
-    }
+    // }
     next()
 });
 
@@ -71,8 +62,6 @@ initializePassport(
 )
 
 app.get('/', check_auth.home, (req, resp) => {
-    // req.flash('success', 'failedddfsdfsd')
-
     resp.render('home.ejs')
 })
 

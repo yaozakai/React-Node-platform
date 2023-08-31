@@ -3,7 +3,7 @@ async function send_alert(title, msg, color='red') {
     var alert_title = document.getElementById('alert-title')
     var alert_message = document.getElementById('alert-message')
 
-    $('alert-box').toggle()
+    // $('alert-box').toggle()
     alert_box.classList.add('alert-warning') // yellow
 
 

@@ -1,11 +1,15 @@
 const check_auth = require('./auth-check')
 const router = require('express').Router()
+const moment = require('moment')
 
 
-router.get('/', check_auth.dash, (req, resp) => {
-    // resp.send('you are logged in: ' + req.user.username) 
-    
-    resp.render('dashboard.ejs', { user: req.user })
+router.get('/', check_auth.dash, async (req, resp) => {
+    // update recent session date (might already be updated)
+    req.user.lastSession = req.session.created
+    req.user.markModified('lastSession');
+    await req.user.save()
+
+    resp.render('dashboard.ejs', { user: req.user, moment:moment })
     req.flash('success_msg', 'Welcome')
 })
 
