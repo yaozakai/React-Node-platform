@@ -42,9 +42,7 @@ app.use(cookieSession({
 app.use(passport.initialize())
 app.use(passport.session())
 app.use((req, res, next) => {
-    // if (typeof req.session.created === "undefined") {
-        req.session.created = Date.now()
-    // }    
+    req.session.created = Date.now()
     next()
 });
 

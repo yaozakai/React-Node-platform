@@ -55,8 +55,6 @@ router.post('/register', check_auth.verify, async (req, resp) => {
         User.findOne({ username: req.body.username }).then((currentUser) => {
             // user found via username
             if( currentUser ){
-                // req.flash('alertTitle', 'Username already exists!')
-                // req.flash('alertMsg', 'Pick a different username')
                 req.flash('error', 'Sorry, username already exists! Pick a different one.')
                 resp.redirect('/') 
             } else {
@@ -64,9 +62,6 @@ router.post('/register', check_auth.verify, async (req, resp) => {
                     if( currentUser ){
                         // user found via email
                         if( currentUser.isVerified ) {
-                            // user already verified
-                            // req.flash('alertTitle', 'Account already exists!')
-                            // req.flash('alertMsg', 'Please sign in with your credentials, or click "forgot password" to reset.')
                             req.flash('error', 'Account already exists! Please sign in with your credentials, or click "forgot password" to reset.')
                             resp.redirect('/')
                         } else {
@@ -202,15 +197,6 @@ router.get('/email', async(req, resp, next) => {
                     resp.redirect('/dashboard')
                     return
                 })
-                    // req.login(savedUser).then((loginUser) => {
-                    //     req.flash('error', `Hi ${loginUser.username}! Welcome to the site for the first time! 😎`)
-                    //     // req.flash('alertTitle', `Hi ${currentUser.username}!`)
-                    //     // req.flash('alertMsg', 'Welcome to the site for the first time! 😎')
-                    //     resp.redirect('/dashboard')
-                    //     return
-                    // }).catch((error) => {
-                    //     throw (error)
-                    // })
             }
         }).catch((error) => {
             req.flash('alertTitle', `Email error:${error}`)
@@ -235,8 +221,6 @@ router.get('/email', async(req, resp, next) => {
     req.user.loginCount++
     req.user.lastSession = req.session.created
     await req.user.save()
-    // resp.send(req.user)
-    // resp.send('you are logged in: ' + req.user.username) 
     resp.redirect('/dashboard')
  })
 

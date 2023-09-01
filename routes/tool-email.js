@@ -6,8 +6,6 @@ sgMail.setApiKey(process.env.SENDGRID_KEY)
 function send_email(req, resp, msg, toEmail){
     sgMail.send(msg).then((response ) => {
         console.log( 'currentUser:' + response )
-        // req.flash('alertTitle', 'Check your email!')
-        // req.flash('alertMsg', `Email has been sent to ${currentUser.email}. Please verify your account through the link sent to you.`)
         req.flash('error', `Check your email, ${toEmail}. Please verify your account through the link sent to you.`)
         resp.redirect('/')
     }).catch((error) => {

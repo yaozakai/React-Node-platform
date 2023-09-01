@@ -67,27 +67,4 @@ module.exports = {
             return
         }
     }
-    // toDashboard: function ( req, resp, next) {
-    //     if (!req.user) {
-    //         // not logged in
-    //         // check if the user is verified
-    //         User.findOne({ email: req.body.email }).then((currentUser) => {
-    //             // user is logginng in (user exists)
-    //             if( currentUser.isVerified ){
-    //                 next()
-    //             } else {
-    //                 // remind user to confirm email
-    //                 req.flash('resendEmail', req.body.email)                    
-    //                 resp.redirect('/')
-    //             }
-    //         }).catch(() => {
-    //             // user is registering (no user found)
-    //             next()
-    //         })    
-    //     } else {
-    //         // logged in
-    //         next()
-    //     }
-        
-    // }
 }
