@@ -11,7 +11,6 @@ mongoose.connect(process.env.MONGODB_CONNECTION_STRING), () => {
 }
 mongoose.connection.on('connected', () => console.log('Connected'));
 
-
 const authRoutes = require('./routes/auth-routes')
 const dashboardRoutes = require('./routes/dashboard-routes')
 const check_auth = require('./routes/auth-check')
@@ -28,7 +27,7 @@ const User = require('./db/user-model')
 
 const fs = require('fs').promises
 
-const port = 3000
+const port = 5000
 
 app.set('view-engine', 'ejs')
 // to avoid using POST and require devs to use DELETE
@@ -45,7 +44,7 @@ app.use(passport.session())
 app.use((req, res, next) => {
     // if (typeof req.session.created === "undefined") {
         req.session.created = Date.now()
-    // }
+    // }    
     next()
 });
 
