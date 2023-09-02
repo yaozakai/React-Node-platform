@@ -42,7 +42,7 @@ module.exports = {
             text: `Follow this link to reset: 
             http://${req.headers.host}/auth/reset_pass?token=${currentUser.forgotToken}
             `,
-            html: `<a href="http://${req.headers.host}/auth/reset_pass?token=${currentUser.forgotToken}">Click here to activate your account!</a><br>
+            html: `<a href="http://${req.headers.host}/auth/reset_pass?token=${currentUser.forgotToken}">Click here to reset your password!</a><br>
                 <a href="http://${req.headers.host}/auth/reset_pass?token=${currentUser.forgotToken}">http://${req.headers.host}/auth/reset_pass?token=${currentUser.forgotToken}</a>`
         }
         send_email(req, resp, msg, currentUser.email)

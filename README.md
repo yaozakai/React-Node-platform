@@ -1,20 +1,16 @@
-
-
-# ${projectname}
-
-
+# Login/Register/Dashboard Example in Node.js
 
 ## Usage
-
-
-
-## Developing
-
-
+Created for the Aha Candidate Exam: Back-End/Full-Stack Engineer
+Project Link: https://wipventuredao.notion.site/Candidate-Exam-Back-End-Full-Stack-Engineer-bc9e910d3c0f477287cda3ad874ee572
+Demo Link: https://gambits.vip
 
 ### Tools
+IDE: VS Code
+Env: NodeJS, HTML, CSS, JQuery, Bootstrap
+DB: MongoDB Atlas Cloud
+OAuth: Google API
+Email: SendGrid
 
-Created with [Nodeclipse](https://github.com/Nodeclipse/nodeclipse-1)
- ([Eclipse Marketplace](http://marketplace.eclipse.org/content/nodeclipse), [site](http://www.nodeclipse.org))   
-
-Nodeclipse is free open-source project that grows with your contributions.
+#### Note
+.env file is git ignored
