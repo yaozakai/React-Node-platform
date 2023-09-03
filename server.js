@@ -14,6 +14,7 @@ mongoose.connection.on('connected', () => console.log('Connected'));
 const authRoutes = require('./routes/auth-routes')
 const dashboardRoutes = require('./routes/dashboard-routes')
 const check_auth = require('./routes/auth-check')
+const testRoutes = require('./routes/test-routes')
 
 const bcrypt = require('bcrypt')
 const passport = require('passport')
@@ -27,7 +28,7 @@ const User = require('./db/user-model')
 
 const fs = require('fs').promises
 
-const port = 5000
+const port = 3000
 
 app.set('view-engine', 'ejs')
 // to avoid using POST and require devs to use DELETE
@@ -44,11 +45,87 @@ app.use(passport.session())
 app.use((req, res, next) => {
     req.session.created = Date.now()
     next()
-});
+})
 
 // add routes from other files here
 app.use('/auth', authRoutes)
 app.use('/dashboard', dashboardRoutes)
+app.use('/test', testRoutes)
+
+const swaggerJsonDoc = require('swagger-jsdoc')
+const swaggerUI = require('swagger-ui-express')
+
+const hostname = require('os').hostname()
+
+const swaggerOptions = {
+	swaggerDefinition: {
+        openapi: '3.0.3',
+		info: {
+            version: '1.0.0',
+            title: "Walt Yao's Sign In/Sign Up/Dashboard App",
+			description: "Below is a sample of use cases for API testing",
+			servers: [
+                {
+                  url: 'http://localhost:3000',
+                  description: "Localhost"
+                },
+                {
+                  url: `http://${hostname}`,
+                  description: "Production server"
+                }
+            ]
+		},
+		"components": {
+			"schemas": {
+				"user": {
+					"properties": {
+						"_id": {
+							"type": "string"
+						},
+						"created": {
+							"type": "string"
+						},
+						"lastSession": {
+							"type": "string"
+						},
+						"loginCount": {
+							"type": "string"
+						},
+						"isVerified": {
+							"type": "string"
+						},
+						"username": {
+							"type": "string"
+						},
+						"email": {
+							"type": "string"
+						},
+						"emailToken": {
+							"type": "string"
+						},
+						"forgotToken": {
+							"type": "string"
+						},
+						"password": {
+							"type": "string"
+						},
+						"image": {
+							"type": "string"
+						},
+						"googleId": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	},
+	apis: ['./routes/test-routes.js']
+}
+
+const swaggerDocs = swaggerJsonDoc(swaggerOptions)
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
+
 
 // login modules
 const initializePassport = require('./passport-config')
