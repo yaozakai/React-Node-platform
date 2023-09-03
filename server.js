@@ -29,7 +29,10 @@ const User = require('./db/user-model')
 const fs = require('fs').promises
 
 const hostname = require('os').hostname()
-var port = 5000
+var port = 3000
+if( hostname === 'srv.gambits.vip'){
+    port = 5000
+}
 
 app.set('view-engine', 'ejs')
 // to avoid using POST and require devs to use DELETE
