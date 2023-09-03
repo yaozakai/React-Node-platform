@@ -28,7 +28,8 @@ const User = require('./db/user-model')
 
 const fs = require('fs').promises
 
-const port = 3000
+const hostname = require('os').hostname()
+var port = 5000
 
 app.set('view-engine', 'ejs')
 // to avoid using POST and require devs to use DELETE
@@ -55,7 +56,7 @@ app.use('/test', testRoutes)
 const swaggerJsonDoc = require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
 
-const hostname = require('os').hostname()
+
 
 const swaggerOptions = {
 	swaggerDefinition: {
