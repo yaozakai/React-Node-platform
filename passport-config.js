@@ -5,35 +5,31 @@ const User = require('./db/user-model')
 
 function initialize(passport) {
     const authenticateUser = async (email, password, done) => {
+
         User.findOne({email: email}).then( async (user) => {
             if (user){
-                try {
-                    if (await bcrypt.compare(password, user.password)) {
-                        return done( null, user)
-                    } else {
-                        return done( null, false, { message: 'Incorrect password'})
+                if( user.isVerified ){
+                    try {
+                        if (await bcrypt.compare(password, user.password)) {
+                            // update user stats (after passport authenticate, otherwise, user is redirected at check_auth.verify)
+                            user.loginCount++
+                            await user.save()
+                            return done( null, user)
+                        } else {
+                            return done( null, false, { message: 'Incorrect password'})
+                        }
+                    } catch (e) {
+                        return done(e)
                     }
-                } catch (e) {
-                    return done(e)
+                } else {
+                    return done( null, user, { message: 'User not verified'})
                 }
             } else {
                 return done(null, false, { message: 'No user exists'})
             }
         })
 
-        // const user = User.findOne({email: email})
-        // if (user == null) {
-        //     return done(null, false, { message: 'No user exists'})
-        // }
-        // try {
-        //     if (await bcrypt.compare(password, user.password)) {
-        //         return done( null, user)
-        //     } else {
-        //         return done( null, false, { message: 'Incorrect password'})
-        //     }
-        // } catch (e) {
-        //     return done(e)
-        // }
+        // return done(null, false, { message: 'No user exists'})
 
     }
     const authenticateGoogleUser = async (accessToken, refreshToken, profile, done) => {

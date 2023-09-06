@@ -56,10 +56,12 @@ app.use('/auth', authRoutes)
 app.use('/dashboard', dashboardRoutes)
 app.use('/test', testRoutes)
 
+app.use(function(err, req, res, next) {
+    console.log(err);
+});
+
 const swaggerJsonDoc = require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
-
-
 
 const swaggerOptions = {
 	swaggerDefinition: {

@@ -13,33 +13,58 @@ module.exports = {
     },
     verify: function ( req, resp, next) {
         // if offline, redirect to login
-        if( !req.user ) {
+        if( !req.isAuthenticated() ) {
             // not logged in
             next()
             return
-        }
-        // logged in, check verified
-        if( req.user.isVerified ) {
+        } else {
             // logged in and verified. just go to dashboard
             return resp.redirect('/dashboard')    
+        }
+        // User.findOne({ email: req.body.email }).then((currentUser) => {
+        //     if( currentUser ){
+        //         if( !currentUser.isVerified ){
+        //             // not verified, return to home, request resending of verify email
+        //             req.flash('resendEmail', req.body.email)
+        //             req.flash('error', 'Account already exists but you have not yet verified your email!')
+        //             resp.redirect('/')
+        //             return 
+        //         } else {
+        //             // logged in and verified. just go to dashboard
+        //             return resp.redirect('/dashboard')    
+        //         }
+        //     }
+        // })        
+    },
+    login: function (req, resp, next){
+        // if offline, redirect to login
+        if( !req.isAuthenticated() ) {
+            // not logged in
+            User.findOne({ email: req.body.email }).then((currentUser) => {
+                if( !currentUser.isVerified ){
+                    req.flash('resendEmail', req.body.email)
+                    req.flash('error', 'Account already exists but you have not yet verified your email!')
+                    resp.redirect('/')
+                    return
+                } else {
+                    next()
+                    return
+                }
+            })
         } else {
-            // not verified, return to home, request resending of verify email
-            req.flash('resendEmail', req.user.email)
-            req.flash('error', 'Account already exists but you have not yet verified your email!')
-            resp.redirect('/')
-            return 
+            // logged in and verified. just go to dashboard
+            return resp.redirect('/dashboard')    
         }
     },
-    // to decide on which ejs file to
     dash: function ( req, resp, next) {
-        if( req.user ) {
+        if( req.isAuthenticated() ) {
             if( req.user.isVerified || req.user.googleId ) {
                 // logged in and verified, proceed
                 next()
                 return
 ß            } else {
                 // not verified, return to home, request resending of verify email
-                req.flash('resendEmail', true)
+                req.flash('resendEmail', req.user.email)
                 req.flash('error', 'Account already exists but you have not yet verified your email!')
                 resp.redirect('/')
                 return       
@@ -51,7 +76,7 @@ module.exports = {
         }
     },
     home: function ( req, resp, next) {
-        if( req.user ) {
+        if( req.isAuthenticated() ) {
             if( req.user.isVerified ) {
                 // logged in and verified, proceed
                 resp.redirect('/dashboard')

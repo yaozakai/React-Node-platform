@@ -13,16 +13,11 @@ router.get('/login', (req, resp) => {
     resp.redirect('/')
 })
 
-router.post('/login', check_auth.verify, passport.authenticate('local', {
+router.post('/login', check_auth.login, passport.authenticate('local', {
+    successRedirect: '/dashboard',
     failureRedirect: '/',
     failureFlash: true
-    }), async (req, resp) => {
-        // update user stats (after passport authenticate, otherwise, user is redirected at check_auth.verify)
-        req.user.loginCount++
-        req.user.lastSession = req.session.created
-        await req.user.save()
-        return resp.redirect('/dashboard')
-    }
+    })
 )
 
 router.delete('/logout', (req, resp) => {
@@ -173,11 +168,16 @@ router.get('/verifyEmail', check_auth.verifyEmail, async(req, resp, next) => {
     try {
         // check if user exists
         User.findOne({ email: req.query.email }).then((currentUser) => {
-            toolEmail.sendVerify(req, resp, currentUser)
+            if( currentUser ){
+                toolEmail.sendVerify(req, resp, currentUser)
+            } else {
+                req.flash('error', `User doesn't exist.`)
+                resp.redirect('/')
+                return 
+            }
         })
     } catch {
         resp.redirect('/')
-
     }
 })
 
@@ -193,8 +193,8 @@ router.get('/email', async(req, resp, next) => {
                     if( loginError ){
                         console.log( loginError )
                     }
-                    req.flash('error', `Hi ${currentUser.username}! Welcome to the site for the first time! 😎`)
-                    resp.redirect('/dashboard')
+                    req.flash('error', `Hi ${currentUser.username}! You're verified! Sign in to continue 😎`)
+                    resp.redirect('/')
                     return
                 })
             }
