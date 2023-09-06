@@ -62,13 +62,7 @@ module.exports = {
                 // logged in and verified, proceed
                 next()
                 return
-ß            } else {
-                // not verified, return to home, request resending of verify email
-                req.flash('resendEmail', req.user.email)
-                req.flash('error', 'Account already exists but you have not yet verified your email!')
-                resp.redirect('/')
-                return       
-            }
+ß            }
         } else {
             // not logged in
             resp.redirect('/')
