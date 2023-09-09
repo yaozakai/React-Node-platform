@@ -184,17 +184,19 @@ router.get('/verifyEmail', check_auth.verifyEmail, async(req, resp, next) => {
 router.get('/email', async(req, resp, next) => {
 
     try {
-        User.findOne({ emailToken: req.query.token }).then( async ( currentUser) => {
+        User.findOne({ emailToken: req.query.token }).then(  ( currentUser) => {
             if( currentUser ){
                 currentUser.emailToken = ''
                 currentUser.isVerified = true
-                await currentUser.save()
+                
                 req.login(currentUser, loginError => {
                     if( loginError ){
                         console.log( loginError )
                     }
+                    currentUser.loginCount++
+                    currentUser.save()
                     req.flash('error', `Hi ${currentUser.username}! You're verified! Sign in to continue 😎`)
-                    resp.redirect('/')
+                    resp.redirect('/dashboard')
                     return
                 })
             }
