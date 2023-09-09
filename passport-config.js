@@ -8,7 +8,7 @@ const User = require('./db/user-model')
 const hostname = require('os').hostname()
 var url = 'https://2517-2001-b011-2000-13b9-1046-5720-eb27-40e5.ngrok-free.app'
 if( hostname === 'srv.gambits.vip'){
-    url = ''
+    url = 'https://gambits.vip'
 }
 
 function initialize(passport) {
