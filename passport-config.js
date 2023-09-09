@@ -113,7 +113,7 @@ function initialize(passport) {
     passport.use(
         new FacebookStrategy({
             callbackURL: url + "/auth/facebook/redirect",
-            clientId: process.env.FACEBOOK_APP_ID,
+            clientID: process.env.FACEBOOK_APP_ID,
             clientSecret: process.env.FACEBOOK_APP_SECRET},
             authenticateFBUser))
 
