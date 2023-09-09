@@ -106,7 +106,7 @@ function initialize(passport) {
             authenticateUser))
     passport.use(
         new GoogleStrategy({ 
-            callbackURL: url + '/auth/google/redirect',
+            callbackURL: '/auth/google/redirect',
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET},
             authenticateGoogleUser))
