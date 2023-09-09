@@ -1,7 +1,15 @@
 const LocalStrategy = require('passport-local').Strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy
+const FacebookStrategy = require('passport-facebook').Strategy
+
 const bcrypt = require('bcrypt')
 const User = require('./db/user-model')
+
+const hostname = require('os').hostname()
+var url = 'https://2517-2001-b011-2000-13b9-1046-5720-eb27-40e5.ngrok-free.app'
+if( hostname === 'srv.gambits.vip'){
+    url = ''
+}
 
 function initialize(passport) {
     const authenticateUser = async (email, password, done) => {
@@ -49,10 +57,40 @@ function initialize(passport) {
                     username: profile.displayName,
                     emailToken: '',
                     forgotToken: '',
+                    facebookId: '',
                     googleId: profile.id,
                     image: profile.photos[0]['value'],
                     password: '',
                     locale: profile.locale
+
+                }).save().then((newUser) => {
+                    done(null, newUser)
+                })
+            }
+        })
+    }
+    const authenticateFBUser = async (accessToken, refreshToken, profile, done) => {
+        // check if user exists
+        User.findOne({facebookId: profile.id}).then((currentUser) => {
+            if (currentUser){
+                // user exists
+                done(null, currentUser)
+            } else {
+                // create user
+                new User({
+                    created: Date.now(),
+                    lastSession: '',
+                    loginCount: 0,
+                    isVerified: true,
+                    email: '',
+                    username: profile.displayName,
+                    emailToken: '',
+                    forgotToken: '',
+                    googleId: '',
+                    facebookId: profile.id,
+                    image: '',
+                    password: '',
+                    locale: ''
 
                 }).save().then((newUser) => {
                     done(null, newUser)
@@ -68,10 +106,16 @@ function initialize(passport) {
             authenticateUser))
     passport.use(
         new GoogleStrategy({ 
-            callbackURL: '/auth/google/redirect',
+            callbackURL: url + '/auth/google/redirect',
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET},
             authenticateGoogleUser))
+    passport.use(
+        new FacebookStrategy({
+            callbackURL: url + "/auth/facebook/redirect",
+            clientID: process.env.FACEBOOK_APP_ID,
+            clientSecret: process.env.FACEBOOK_APP_SECRET},
+            authenticateFBUser))
 
     // cookie
     passport.serializeUser((user, done) => { done(null, user.id) })

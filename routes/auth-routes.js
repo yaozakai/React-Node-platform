@@ -212,16 +212,39 @@ router.get('/email', async(req, resp, next) => {
     }
 })
 
- router.get('/google', check_auth.verify, passport.authenticate('google', {
-        scope: ['profile']
-    })
- )
+router.get('/google', check_auth.verify, passport.authenticate('google', {
+       scope: ['profile']
+   })
+)
 
- router.get('/google/redirect', check_auth.verify, passport.authenticate('google'), async (req, resp) => {
-    req.user.loginCount++
-    req.user.lastSession = req.session.created
-    await req.user.save()
-    resp.redirect('/dashboard')
- })
+router.get('/facebook', check_auth.verify, passport.authenticate('facebook'))
+
+router.get('/google/redirect', check_auth.verify, passport.authenticate('google'), async (req, resp) => {
+    if( req.isAuthenticated() ) {
+        req.user.loginCount++
+        req.user.lastSession = req.session.created
+        req.user.markModified('loginCount')
+        req.user.markModified('lastSession')
+        await req.user.save()
+        resp.redirect('/dashboard')
+    } else {
+        req.flash('error', 'Authenticated! Please log in')
+        resp.redirect('/')
+    }
+})
+
+router.get('/facebook/redirect', check_auth.verify, passport.authenticate('facebook'), async (req, resp) => {
+    if( req.isAuthenticated() ) {
+        req.user.loginCount++
+        req.user.lastSession = req.session.created
+        req.user.markModified('loginCount')
+        req.user.markModified('lastSession')
+        await req.user.save()
+        resp.redirect('/dashboard')
+    } else {
+        req.flash('error', 'Authenticated! Please log in')
+        resp.redirect('/')
+    }
+})
 
  module.exports = router

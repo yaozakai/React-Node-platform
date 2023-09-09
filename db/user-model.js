@@ -13,6 +13,7 @@ const userSchema = new Schema({
     password: String,
     image: String,
     googleId: String,
+    facebookId: String,
     locale: String
 })
 

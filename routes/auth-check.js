@@ -43,7 +43,7 @@ module.exports = {
             User.findOne({ email: req.body.email }).then((currentUser) => {
                 if( !currentUser.isVerified ){
                     req.flash('resendEmail', req.body.email)
-                    req.flash('error', 'Account already exists but you have not yet verified your email!')
+                    req.flash('error', 'Can not sign in until your verify your email!')
                     resp.redirect('/')
                     return
                 } else {
@@ -62,7 +62,13 @@ module.exports = {
                 // logged in and verified, proceed
                 next()
                 return
-ß            }
+ß            } else {
+                // not verified, return to home, request resending of verify email
+                req.flash('resendEmail', req.user.email)
+                req.flash('error', 'You need to verify your account before trying the dashboard!')
+                resp.redirect('/')
+                return       
+            }
         } else {
             // not logged in
             resp.redirect('/')
