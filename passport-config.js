@@ -3,7 +3,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
 
 const bcrypt = require('bcrypt')
-const User = require('./db/user-model')
+const User = require('./components/user-model')
 
 const hostname = require('os').hostname()
 var url = 'https://2517-2001-b011-2000-13b9-1046-5720-eb27-40e5.ngrok-free.app'
@@ -13,31 +13,35 @@ if( hostname === 'srv.gambits.vip'){
 
 function initialize(passport) {
     const authenticateUser = async (email, password, done) => {
-
-        User.findOne({email: email}).then( async (user) => {
-            if (user){
-                if( user.isVerified ){
-                    try {
-                        if (await bcrypt.compare(password, user.password)) {
-                            // update user stats (after passport authenticate, otherwise, user is redirected at check_auth.verify)
-                            user.loginCount++
-                            await user.save()
-                            return done( null, user)
-                        } else {
-                            return done( null, false, { message: 'Incorrect password'})
-                        }
-                    } catch (e) {
-                        return done(e)
+        try {
+            // Retrieve user by email
+            const user = await getUserByEmail(email);
+            if (user) {
+                if (user.isVerified) {
+                    // Compare passwords
+                    const passwordMatch = await bcrypt.compare(password, user.password);
+                    if (passwordMatch) {
+                        // Update user stats
+                        user.loginCount++;
+                        await user.save();
+                        // Authentication successful
+                        return done(null, user);
+                    } else {
+                        // Incorrect password
+                        return done(null, false, { message: 'Incorrect password' });
                     }
                 } else {
-                    return done( null, user, { message: 'User not verified'})
+                    // User not verified
+                    return done(null, user, { message: 'User not verified' });
                 }
             } else {
-                return done(null, false, { message: 'No user exists'})
+                // No user exists
+                return done(null, false, { message: 'No user exists' });
             }
-        })
-
-        // return done(null, false, { message: 'No user exists'})
+        } catch (error) {
+            // Handle any errors that occur
+            return done(error);
+        }
 
     }
     const authenticateGoogleUser = async (accessToken, refreshToken, profile, done) => {
@@ -107,14 +111,14 @@ function initialize(passport) {
     passport.use(
         new GoogleStrategy({ 
             callbackURL: '/auth/google/redirect',
-            clientID: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET},
+            clientID: process.env.GOOGLE_ID,
+            clientSecret: process.env.GOOGLE_SECRET},
             authenticateGoogleUser))
     passport.use(
         new FacebookStrategy({
             callbackURL: url + "/auth/facebook/redirect",
-            clientID: process.env.FACEBOOK_APP_ID,
-            clientSecret: process.env.FACEBOOK_APP_SECRET},
+            clientID: process.env.FACEBOOK_ID,
+            clientSecret: process.env.FACEBOOK_SECRET},
             authenticateFBUser))
 
     // cookie

@@ -1,6 +1,6 @@
 const passport = require('passport')
 const router = require('express').Router()
-const User = require('./../db/user-model')
+const User = require('../components/user-model')
 
 /**
  * @swagger

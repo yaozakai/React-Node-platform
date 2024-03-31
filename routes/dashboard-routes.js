@@ -1,4 +1,4 @@
-const check_auth = require('./auth-check')
+const check_auth = require('../components/auth-check')
 const router = require('express').Router()
 const moment = require('moment')
 

@@ -5,15 +5,22 @@ if (process.env.NODE_ENV != 'production') {
 const express = require('express')
 const app = express()
 
-const mongoose = require('mongoose')
-mongoose.connect(process.env.MONGODB_CONNECTION_STRING), () => {
-    console.log('mongao koneckt!!!!')
-}
-mongoose.connection.on('connected', () => console.log('Connected'));
+// const mongoose = require('mongoose')
+// mongoose.connect(process.env.MONGODB_CONNECTION_STRING), () => {
+//     console.log('mongao koneckt!!!!')
+// }
+// mongoose.connection.on('connected', () => console.log('Connected'));
+// import { initializeApp } from 'firebase/app';
+// const firebaseConfig = {
+// 	//...
+//   };
+// const firebaseApp = initializeApp(firebaseConfig);
+// const firebaseDB = getFirestore(firebaseApp);
+
 
 const authRoutes = require('./routes/auth-routes')
 const dashboardRoutes = require('./routes/dashboard-routes')
-const check_auth = require('./routes/auth-check')
+const check_auth = require('./components/auth-check')
 const testRoutes = require('./routes/test-routes')
 
 const bcrypt = require('bcrypt')
@@ -24,7 +31,7 @@ const cookieSession = require('cookie-session')
 const methodOverride = require('method-override')
 
 // Mongo DB access
-const User = require('./db/user-model')
+const User = require('./components/user-model')
 
 const fs = require('fs').promises
 
@@ -128,7 +135,6 @@ const swaggerOptions = {
 	},
 	apis: ['./routes/test-routes.js']
 }
-
 const swaggerDocs = swaggerJsonDoc(swaggerOptions)
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
 

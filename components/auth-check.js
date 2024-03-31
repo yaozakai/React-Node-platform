@@ -1,15 +1,19 @@
-const User = require('./../db/user-model')
+// const User = require('./../db/user-model')
+const { sql } = require('@vercel/postgres');
+const { getUserByEmail } = require('./user-model');
 
 
 module.exports = {
-    verifyEmail: function ( req, resp, next) {
-        // logged in, check verified
-        if( req.user.isVerified ) {
-            // logged in and verified. just go to dashboard
-            return resp.redirect('/dashboard')    
-        } else {
-            next()
+    verifyEmail: async function ( req, resp, next) {
+        // Retrieve user by email
+        const user = await getUserByEmail(req.body.email);
+        if (user) {
+            if (user.isVerified) {
+                // logged in and verified. just go to dashboard
+                return resp.redirect('/dashboard')
+            }
         }
+        next()
     },
     verify: function ( req, resp, next) {
         // if offline, redirect to login
@@ -36,24 +40,39 @@ module.exports = {
         //     }
         // })        
     },
-    login: function (req, resp, next){
+    login: async function (req, resp, next){
         // if offline, redirect to login
-        if( !req.isAuthenticated() ) {
-            // not logged in
-            User.findOne({ email: req.body.email }).then((currentUser) => {
-                if( !currentUser.isVerified ){
-                    req.flash('resendEmail', req.body.email)
-                    req.flash('error', 'Can not sign in until your verify your email!')
-                    resp.redirect('/')
-                    return
+        if (!req.isAuthenticated()) {
+            try {
+                // Get the user by email from the database
+                const user = await getUserByEmail(req.body.email);
+
+                if (user) {
+                    // If a user with the provided email exists
+                    if (!user.is_verified) {
+                        req.flash('resendEmail', req.body.email);
+                        req.flash('error', 'Cannot sign in until you verify your email!');
+                        resp.redirect('/');
+                        return;
+                    } else {
+                        // User is verified, proceed to the next middleware
+                        next();
+                        return;
+                    }
                 } else {
-                    next()
-                    return
+                    // User with the provided email does not exist
+                    req.flash('error', 'User does not exist');
+                    resp.redirect('/');
+                    return;
                 }
-            })
+            } catch (error) {
+                console.error('Error checking user:', error);
+                resp.status(500).json({ error: 'An error occurred while checking user' });
+                return;
+            }
         } else {
             // logged in and verified. just go to dashboard
-            return resp.redirect('/dashboard')    
+            return resp.redirect('/dashboard');
         }
     },
     dash: function ( req, resp, next) {
