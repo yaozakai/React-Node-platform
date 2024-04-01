@@ -18,10 +18,10 @@ const app = express()
 // const firebaseDB = getFirestore(firebaseApp);
 
 
-const authRoutes = require('./routes/auth-routes')
-const dashboardRoutes = require('./routes/dashboard-routes')
-const check_auth = require('./components/auth-check')
-const testRoutes = require('./routes/test-routes')
+const authRoutes = require('../routes/auth-routes')
+const dashboardRoutes = require('../routes/dashboard-routes')
+const check_auth = require('../components/auth-check')
+const testRoutes = require('../routes/test-routes')
 
 const bcrypt = require('bcrypt')
 const passport = require('passport')
@@ -31,7 +31,7 @@ const cookieSession = require('cookie-session')
 const methodOverride = require('method-override')
 
 // Mongo DB access
-const User = require('./components/user-model')
+const User = require('../components/user-model')
 
 const fs = require('fs').promises
 
@@ -140,7 +140,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
 
 
 // login modules
-const initializePassport = require('./passport-config')
+const initializePassport = require('../passport-config')
 initializePassport(
     passport,
     email => User.findOne({email: email}).email,
