@@ -22,8 +22,7 @@
   "main": "index.js",
   "scripts": {
     "devStart": "nodemon server.js",
-    "build": "npm run build",
-    "install": "npm install"
+    "build": "npm run build"
   },
   "author": "",
   "license": "ISC",
