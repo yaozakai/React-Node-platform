@@ -1,20 +1,19 @@
 import React from 'react';
-import Logo from './ui/logo/logo';
+import Start from './ui/start/start';
 import './App.css';
 import './index.css';
+import './css/font.css';
 
 function App() {
   return (
     <main className="flex items-center justify-center md:h-screen">
-    <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
-      <div className="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
-        <div className="w-32 text-white md:w-36">
-          <Logo />
-        </div>
+      <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4">
+
+            <Start />
+
+        {/* <LoginForm /> */}
       </div>
-      {/* <LoginForm /> */}
-    </div>
-  </main>
+    </main>
   );
 }
 
