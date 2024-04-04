@@ -1,25 +1,20 @@
 import React from 'react';
-import logo from './logo.svg';
+import Logo from './ui/logo/logo';
 import './App.css';
+import './index.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <main className="flex items-center justify-center md:h-screen">
+    <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
+      <div className="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
+        <div className="w-32 text-white md:w-36">
+          <Logo />
+        </div>
+      </div>
+      {/* <LoginForm /> */}
     </div>
+  </main>
   );
 }
 
