@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import waltAvatar from "./images/Walt-avatar.png";
+import waltAvatar from '../../images/Walt-avatar.png';
 import './effects.scss';
-import Socials from './socials';
+import Socials from '../icons';
 import Captions from './captions';
-
 
 
 export default function Start() {
@@ -12,33 +11,31 @@ export default function Start() {
     const [captionFade, setCaptionFade] = useState(false);
     const [captionShow, setCaptionShow] = useState(false);
 
-    // const navigate = useNavigate(); // Initialize useHistory hook
-
-
     const handleClick = () => {
         setImageClicked(true);
+        const audio = new Audio("/song.mp3")
 
-        // Update caption text with delays
+
         setTimeout(() => {
+            audio.play()
             setCaptionText("A 15 year journey.");
             setCaptionShow(true);
-        }, 2000); // 2 seconds delay
+        }, 2000);
 
         setTimeout(() => {
             setCaptionText("The journey continues...");
-        }, 4000); // 2 seconds delay after the first caption
+        }, 6000);
 
         setTimeout(() => {
             setCaptionText("And another chapter begins.");
-        }, 6000); // 2 seconds delay after the second caption
+        }, 9000);
 
         setTimeout(() => {
             setCaptionFade(true);
-            // Redirect to /homepage after the last caption
             setTimeout(() => {
                 window.location.href = '/homepage';
-            }, 3000); // Add a delay before redirecting
-        }, 8000)
+            }, 3000);
+        }, 14000)
     };
 
     return (
@@ -58,7 +55,13 @@ export default function Start() {
                                 <br />
                                 <span className="text-[44px] text-left text-white">Yao</span>
                             </p>
-                            <div className="m-3"><Socials /></div>
+                            <div className="m-3">
+                                {/* Render individual icons here */}
+                                <Socials iconKey="faHouse" href="mailto:walt.yao@gmail.com" />
+                                <Socials iconKey="faLine" href="https://line.me/ti/p/2xe4zhsoin" />
+                                <Socials iconKey="faLinkedin" href="https://www.linkedin.com/in/waltyao" />
+                                <Socials iconKey="faGithub" href="https://github.com/yaozakai" />
+                            </div>
                             <button
                                 className={`rainGlowButton bg-yellow-500 relative  h-10 font-semibold px-6 py-2 rounded min-w-[120px] mb-2`}
                                 onClick={handleClick}

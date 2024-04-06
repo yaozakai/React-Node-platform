@@ -1,5 +1,6 @@
 import React from 'react';
 import './effects.css'
+import Login from '../login/login'
 
 const Homepage: React.FC = () => {
 
@@ -11,9 +12,9 @@ const Homepage: React.FC = () => {
       >
             
             <h1 className="text-2xl">Showtime!</h1>
-            <div className="grid grid-rows-4">
-
-            </div>
+            {/* <div className="grid grid-rows-4"> */}
+                <Login />
+            {/* </div> */}
 
       </div>
     </div>
