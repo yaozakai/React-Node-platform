@@ -10,23 +10,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: aliceblue;
 
-  background-image: linear-gradient(
-    #fcfcfc,
-    #aa628b,
-    #6d6bd1
-    /* #e17497,
-    #eb828b,
-    #ee9183,
-    #eda280,
-    #f1ad7d,
-    #f3b97b,
-    #f3c67b,
-    #f8d273,
-    #fbdf6b,
-    #f9ec64,
-    #f4fb5f */
-  );
+
 }
 
 code {
