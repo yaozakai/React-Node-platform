@@ -9,7 +9,7 @@ import './css/font.css';
 function App() {
   return (
     <Router>
-      <main className="flex items-center justify-center h-screen">
+      <main className="bg-sky-100 flex items-center justify-center h-screen">
           <Routes>
             <Route path="/" element={<Start />} />
             <Route path="/homepage" element={<Homepage />} />

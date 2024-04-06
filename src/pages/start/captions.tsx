@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 interface CaptionsProps {
     show: boolean,
@@ -8,10 +8,9 @@ interface CaptionsProps {
 
 const Captions: React.FC<CaptionsProps> = ({ show, fadeOut, textToShow }) => {
 
-
     return (
 
-            <div className={`captions text-2xl text-center text-white pt-48 ${fadeOut ? 'fadeOut' : show ? '' : 'hidden'}`}>
+            <div className={`captions text-2xl text-center text-black ${fadeOut ? 'fadeOut' : show ? '' : 'hidden'}`}>
                 {textToShow}
             </div>
 
