@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MediaPlayer from '../../components/mediaPlayer';
-import './effects.scss'
+import './effects.scss';
 
 const Captions: React.FC = () => {
     const [captionText, setCaptionText] = useState('');
