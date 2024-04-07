@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form'; // Import useForm from react-hook-form.
-import Socials from '../icons';
+import Icon from '../../components/icons';
 
 interface FormData {
   email: string;
@@ -81,16 +81,16 @@ export default function LoginForm() {
         <div className="grid grid-cols-4 gap-4">
           {/* Render Socials component with appropriate props */}
           <div>
-            <Socials iconKey="faEnvelope" href="" />
+            <Icon iconKey="faEnvelope" href="" />
           </div>
           <div>
-            <Socials iconKey="faGithub" href="" />
+            <Icon iconKey="faGithub" href="" />
           </div>
           <div>
-            <Socials iconKey="faFacebook" href="" />
+            <Icon iconKey="faFacebook" href="" />
           </div>
           <div>
-            <Socials iconKey="faTwitter" href="" />
+            <Icon iconKey="faTwitter" href="" />
           </div>
         </div>
       </div>

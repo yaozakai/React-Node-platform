@@ -1,0 +1,24 @@
+.playBorder {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border: 2px solid #b76d6d; /* Change border color */
+  border-radius: 40px;
+  transition: border-color 1s ease, border-top-width 1s ease, border-bottom-width 1s ease, color 1s ease; /* Add transition property for border width and color */
+}
+
+.playBorder.is--playing {
+  border-color: #2aaba4;
+  border-top-width: 0; /* Changed to border-top-width to allow transition */
+  border-bottom-width: 0; /* Changed to border-bottom-width to allow transition */
+  animation: spin 2.5s ease-in-out infinite forwards; /* Ensure animation ends at last keyframe */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg); /* Ensure it completes a full rotation */
+  }
+}

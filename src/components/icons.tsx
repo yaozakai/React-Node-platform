@@ -4,7 +4,6 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import * as brandsIcons from '@fortawesome/free-brands-svg-icons';
 import * as solidIcons from '@fortawesome/free-solid-svg-icons';
 
-
 interface IconProps {
     [key: string]: {
         icon: IconProp;
@@ -13,11 +12,13 @@ interface IconProps {
 
 interface SocialsProps {
     iconKey: string;
-    href: string;
+    href?: string; // Make href optional
 }
 
-export default function Socials({ iconKey, href }: SocialsProps) {
+export default function Icon({ iconKey, href }: SocialsProps) {
     const iconProps: IconProps = {
+        'faPlay': { icon: solidIcons.faPlay },
+        'faPause': { icon: solidIcons.faPause },
         'faAt': { icon: solidIcons.faAt },
         'faEnvelope': { icon: solidIcons.faEnvelope },
         'faKey': { icon: solidIcons.faKey },
@@ -33,9 +34,13 @@ export default function Socials({ iconKey, href }: SocialsProps) {
 
     const { icon } = iconProps[iconKey];
 
-    return (
-        <a href={href}>
-            <FontAwesomeIcon className='mr-3' icon={icon} />
-        </a>
-    );
+    if (href) {
+        return (
+            <a href={href}>
+                <FontAwesomeIcon className='mr-3' icon={icon} />
+            </a>
+        );
+    } else {
+        return <FontAwesomeIcon icon={icon} />;
+    }
 }
